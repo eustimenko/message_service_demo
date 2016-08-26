@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet id="24072016-1" author="ustimenko">
+        <createTable tableName="user">
+            <column name="id" type="BIGINT" autoIncrement="true" incrementBy="1">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="fullname" type="VARCHAR(255)"/>
+            <column name="login" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint tableName="user" columnNames="login" constraintName="unique_login"/>
+        <addUniqueConstraint tableName="user" columnNames="email" constraintName="unique_email"/>
+
+        <rollback>
+            <dropTable tableName="user" cascadeConstraints="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="24072016-2" author="ustimenko">
+        <createTable tableName="message">
+            <column name="id" type="BIGINT" autoIncrement="true" incrementBy="1">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="text" type="TEXT"/>
+            <column name="created" type="TIMESTAMP" valueDate="${now}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="author" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="recipient" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="author"
+                                 baseTableName="message"
+                                 constraintName="fk_message_author"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="user"/>
+
+        <addForeignKeyConstraint baseColumnNames="recipient"
+                                 baseTableName="message"
+                                 constraintName="fk_message_recipient"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="user"/>
+
+        <rollback>
+            <dropTable tableName="message" cascadeConstraints="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="24072016-3" author="ustimenko">
+        <createTable tableName="user_to_user">
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="friend_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="user_to_user"
+                                 constraintName="fk_user_to_friend"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="user"/>
+
+        <addForeignKeyConstraint baseColumnNames="friend_id"
+                                 baseTableName="user_to_user"
+                                 constraintName="fk_friend_to_user"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="user"/>
+
+        <rollback>
+            <dropTable tableName="user_to_user" cascadeConstraints="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="24072016-4" author="ustimenko">
+        <createTable tableName="role">
+            <column name="id" type="BIGINT" autoIncrement="true" incrementBy="1">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint tableName="role" columnNames="name" constraintName="unique_role"/>
+
+        <createTable tableName="user_role">
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="user_role"
+                                 constraintName="fk_user_role"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="user"/>
+
+        <addForeignKeyConstraint baseColumnNames="role_id"
+                                 baseTableName="user_role"
+                                 constraintName="fk_role_user"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="role"/>
+        <rollback>
+            <dropTable tableName="user_role" cascadeConstraints="true"/>
+            <dropTable tableName="role" cascadeConstraints="true"/>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

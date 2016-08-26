@@ -1,0 +1,19 @@
+*.class
+
+# Package Files
+*.jar
+*.war
+*.ear
+
+# Log files
+*.log
+
+# Idea project
+.idea/
+*.iml
+
+# Max OS artefacts
+.DS_Store
+
+# Maven tergets
+target/

@@ -1,0 +1,46 @@
+SET DATABASE SQL SYNTAX ORA TRUE;
+
+CREATE TABLE user(
+  id BIGINT IDENTITY PRIMARY KEY,
+  fullname VARCHAR(255),
+  login VARCHAR(255) NOT NULL,
+  password LONGVARCHAR NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  CONSTRAINT unique_login UNIQUE (login),
+  CONSTRAINT unique_email UNIQUE (email)
+);
+
+CREATE TABLE message(
+  id BIGINT IDENTITY PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  text VARCHAR(255),
+  created TIMESTAMP DEFAULT now(),
+  author BIGINT NOT NULL,
+  recipient BIGINT NOT NULL,
+  FOREIGN KEY (author) REFERENCES user(id),
+  FOREIGN KEY (recipient) REFERENCES user(id)
+);
+
+CREATE TABLE user_to_user(
+  user_id BIGINT NOT NULL,
+  friend_id BIGINT NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES user(id),
+  FOREIGN KEY (friend_id) REFERENCES user(id)
+);
+
+CREATE TABLE role(
+  id BIGINT IDENTITY PRIMARY KEY,
+  name VARCHAR(30) NOT NULL,
+  CONSTRAINT unique_role UNIQUE (name),
+);
+
+CREATE TABLE user_role(
+  user_id BIGINT NOT NULL,
+  role_id BIGINT NOT NULL,
+  CONSTRAINT fk_role_user FOREIGN KEY (role_id)
+      REFERENCES role(id) MATCH SIMPLE
+      ON UPDATE RESTRICT ON DELETE CASCADE,
+  CONSTRAINT fk_user_role FOREIGN KEY (user_id)
+      REFERENCES user(id) MATCH SIMPLE
+      ON UPDATE RESTRICT ON DELETE CASCADE
+);

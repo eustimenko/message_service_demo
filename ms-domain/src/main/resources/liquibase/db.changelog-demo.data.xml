@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet id="demo-24072016-1" author="ustimenko" runOnChange="true">
+        <sql>
+            INSERT INTO role(id, name) VALUES (1, 'ROLE_ROOT');
+            INSERT INTO role(id, name) VALUES (2, 'ROLE_USER');
+
+            INSERT INTO user(id, login, email, password) VALUES (1, 'admin', 'admin@admin.com', '$2a$10$dTLh8sSdqkQVpoL31tt9renepDKsFNLKwkJdjEbg5uQV2kli0C2qu');
+            INSERT INTO user_role(user_id, role_id) VALUES (1,1);
+            INSERT INTO user_role(user_id, role_id) VALUES (1,2);
+
+            INSERT INTO user(id, login, email, password) VALUES (2, 'user', 'user@admin.com', '$2a$10$dTLh8sSdqkQVpoL31tt9renepDKsFNLKwkJdjEbg5uQV2kli0C2qu');
+            INSERT INTO user_role(user_id, role_id) VALUES (1,2);
+
+            INSERT INTO user_to_user(user_id, friend_id) VALUES (1,2);
+        </sql>
+    </changeSet>
+</databaseChangeLog>
